@@ -1,0 +1,104 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --primary-yellow: #FFD700;
+    --gold: #FFC107;
+    --primary-orange: #FF8C00;
+    --fire-orange: #FF5722;
+    --fire-red: #D7261E;
+    --deep-red: #8B1E16;
+    --dark-brown: #1E120D;
+    --card-brown: #2A1A12;
+    --light-brown: #382217;
+    --text-primary: #FFF8E7;
+    --text-secondary: #C6B7A5;
+    --border-gold: rgba(255, 193, 7, 0.3);
+  }
+
+  body {
+    background-color: var(--dark-brown);
+    color: var(--text-primary);
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    overflow-x: hidden;
+  }
+
+  h1, h2, h3, h4, .font-heading {
+    font-family: 'Outfit', 'Cinzel', system-ui, sans-serif;
+  }
+
+  .font-cinzel {
+    font-family: 'Cinzel', serif;
+  }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #1E120D;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #382217;
+  border: 1px solid rgba(255, 193, 7, 0.25);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #FF8C00;
+}
+
+/* Subtle glow effects */
+.glow-gold {
+  box-shadow: 0 0 25px rgba(255, 193, 7, 0.25);
+}
+
+.glow-fire {
+  box-shadow: 0 0 30px rgba(255, 87, 34, 0.35);
+}
+
+.glow-border-gold {
+  border-color: rgba(255, 193, 7, 0.4);
+  box-shadow: inset 0 0 15px rgba(255, 193, 7, 0.08), 0 4px 20px rgba(0, 0, 0, 0.5);
+}
+
+/* Minecraft pattern overlay */
+.mc-grid-pattern {
+  background-image: 
+    linear-gradient(to right, rgba(255, 193, 7, 0.03) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 193, 7, 0.03) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+/* Shimmer animation */
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.animate-shimmer {
+  animation: shimmer 2.5s infinite;
+}
+
+/* Fire flicker animation */
+@keyframes fireFlicker {
+  0%, 100% { opacity: 0.9; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.02); }
+}
+
+.animate-fire {
+  animation: fireFlicker 3s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

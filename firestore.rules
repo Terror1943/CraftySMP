@@ -1,0 +1,91 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Global default-deny safety net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper Primitives
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isAdmin() {
+      return isSignedIn() && (
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid)) ||
+        request.auth.token.email == 'demonthunder2981@gmail.com'
+      );
+    }
+
+    // Connection Health Verification Document
+    match /test/connection {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // User Profiles
+    match /users/{userId} {
+      allow get: if isOwner(userId) || isAdmin();
+      allow list: if isAdmin();
+      allow create: if isOwner(userId) &&
+        incoming().uid == request.auth.uid &&
+        (incoming().role == 'player' || isAdmin());
+      allow update: if isOwner(userId) &&
+        incoming().uid == existing().uid &&
+        (!incoming().diff(existing()).affectedKeys().hasAny(['role']) || isAdmin());
+      allow delete: if isAdmin();
+    }
+
+    // Delivery Orders
+    match /orders/{orderId} {
+      allow get: if isSignedIn() && (resource.data.userId == request.auth.uid || isAdmin());
+      allow list: if isSignedIn() && (resource.data.userId == request.auth.uid || isAdmin());
+      allow create: if incoming().orderNumber is string &&
+        incoming().minecraftUsername is string &&
+        incoming().paymentStatus in ['pending', 'completed', 'test_mode', 'failed'] &&
+        incoming().deliveryStatus in ['queued', 'delivering', 'delivered', 'failed'];
+      allow update, delete: if isAdmin();
+    }
+
+    // Rank Claim Applications
+    match /rankApplications/{applicationId} {
+      allow get: if isSignedIn() && (resource.data.userId == request.auth.uid || isAdmin());
+      allow list: if isSignedIn() && (resource.data.userId == request.auth.uid || isAdmin());
+      allow create: if incoming().rankId is string &&
+        incoming().minecraftUsername is string &&
+        incoming().status == 'pending';
+      allow update, delete: if isAdmin();
+    }
+
+    // Store Catalog (Custom Weapons, Kits, Coins, Specials)
+    match /products/{productId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Admin Authorizations
+    match /admins/{userId} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin();
+    }
+  }
+}

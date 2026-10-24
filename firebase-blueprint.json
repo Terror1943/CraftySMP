@@ -1,0 +1,109 @@
+{
+  "entities": {
+    "User": {
+      "title": "User Profile",
+      "description": "Registered player profile associated with Firebase Auth UID",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "description": "Firebase Auth UID" },
+        "email": { "type": "string", "format": "email", "description": "Player email" },
+        "displayName": { "type": "string", "description": "Display name" },
+        "photoURL": { "type": "string", "description": "Profile picture URL" },
+        "minecraftUsername": { "type": "string", "description": "Linked Minecraft in-game name (IGN)" },
+        "discordTag": { "type": "string", "description": "Discord handle" },
+        "coinsBalance": { "type": "number", "description": "In-game coins balance" },
+        "role": { "type": "string", "enum": ["player", "admin"], "description": "User role" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Account registration timestamp" }
+      },
+      "required": ["uid", "email"]
+    },
+    "Order": {
+      "title": "Delivery Order",
+      "description": "Minecraft store purchase order queued for in-game command delivery",
+      "type": "object",
+      "properties": {
+        "orderNumber": { "type": "string", "description": "Unique order tracking code e.g. CSMP-4821" },
+        "userId": { "type": "string", "description": "Ordering user UID or guest reference" },
+        "minecraftUsername": { "type": "string", "description": "Target Minecraft player IGN" },
+        "items": { "type": "array", "description": "Purchased items with quantity and price" },
+        "totalInr": { "type": "number", "description": "Total real INR paid" },
+        "totalCoins": { "type": "number", "description": "Total in-game coins spent" },
+        "paymentMethod": { "type": "string", "description": "Payment gateway or wallet mode" },
+        "paymentStatus": { "type": "string", "enum": ["pending", "completed", "test_mode", "failed"], "description": "Payment authorization state" },
+        "deliveryStatus": { "type": "string", "enum": ["queued", "delivering", "delivered", "failed"], "description": "Server command delivery state" },
+        "commandsExecuted": { "type": "array", "description": "List of console commands dispatched" },
+        "retryCount": { "type": "number", "description": "Number of dispatch retries" },
+        "notes": { "type": "string", "description": "Customer notes or Discord tag" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Creation timestamp" }
+      },
+      "required": ["orderNumber", "minecraftUsername", "paymentStatus", "deliveryStatus"]
+    },
+    "RankApplication": {
+      "title": "Rank Claim Application",
+      "description": "Player application for server ranks (Media, VIP, SkullCrusher, etc.)",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "description": "Applicant UID" },
+        "rankId": { "type": "string", "description": "Target rank identifier" },
+        "rankName": { "type": "string", "description": "Target rank display name" },
+        "minecraftUsername": { "type": "string", "description": "Minecraft IGN" },
+        "discordTag": { "type": "string", "description": "Discord contact" },
+        "evidenceUrl": { "type": "string", "description": "URL to proof video, stream, or kill log" },
+        "notes": { "type": "string", "description": "Applicant comments" },
+        "status": { "type": "string", "enum": ["pending", "approved", "rejected"], "description": "Staff review status" },
+        "adminNotes": { "type": "string", "description": "Staff resolution notes" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Submission timestamp" }
+      },
+      "required": ["rankId", "rankName", "minecraftUsername", "status"]
+    },
+    "Product": {
+      "title": "Store Product",
+      "description": "Custom weapon, kit, coin pack, or special item in the store catalog",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Unique product SKU" },
+        "name": { "type": "string", "description": "Product display name" },
+        "category": { "type": "string", "description": "Product category" },
+        "price": { "type": "number", "description": "Configured price" },
+        "currency": { "type": "string", "enum": ["INR", "COINS"], "description": "Transaction currency" },
+        "image": { "type": "string", "description": "Image asset URL" },
+        "description": { "type": "string", "description": "Product summary" },
+        "lore": { "type": "string", "description": "Fantasy item lore" },
+        "isFeatured": { "type": "boolean", "description": "Whether highlighted on homepage" }
+      },
+      "required": ["id", "name", "category", "price", "currency"]
+    },
+    "Admin": {
+      "title": "Admin Permission Record",
+      "description": "Privileged staff identifier document",
+      "type": "object",
+      "properties": {
+        "email": { "type": "string", "description": "Admin email address" },
+        "grantedAt": { "type": "string", "format": "date-time", "description": "Grant timestamp" }
+      },
+      "required": ["email"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "Player accounts and profile settings"
+    },
+    "/orders/{orderId}": {
+      "schema": "Order",
+      "description": "Store orders and server delivery queue"
+    },
+    "/rankApplications/{applicationId}": {
+      "schema": "RankApplication",
+      "description": "Player rank claim submissions"
+    },
+    "/products/{productId}": {
+      "schema": "Product",
+      "description": "Server custom weapons and store catalog items"
+    },
+    "/admins/{userId}": {
+      "schema": "Admin",
+      "description": "Document presence signifies administrator privileges"
+    }
+  }
+}

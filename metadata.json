@@ -1,0 +1,6 @@
+{
+  "name": "CraftySMP Season 2 — Store & Server Portal",
+  "description": "Official website and store for CraftySMP Season 2. Forge your legend with custom weapons, ranks, kits, live Minecraft server status, and community Discord.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
